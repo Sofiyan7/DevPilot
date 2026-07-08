@@ -35,28 +35,70 @@ The following diagram illustrates how the frontend components, API endpoints, se
 
 ```mermaid
 graph TD
-    %% Clients
-    Browser[Client Browser]
-    
-    %% API Gateways
-    subgraph DevPilot_Server [DevPilot Server Processes]
-        NextJS[Next.js 15 Backend]
-        TerminalProcess[Spawned PowerShell/Bash Terminal]
+    %% Styling classes
+    classDef client fill:#1e1b4b,stroke:#818cf8,stroke-width:2px,color:#fff;
+    classDef api fill:#062f4f,stroke:#38bdf8,stroke-width:2px,color:#fff;
+    classDef runtime fill:#14532d,stroke:#4ade80,stroke-width:2px,color:#fff;
+    classDef storage fill:#3f2a14,stroke:#f59e0b,stroke-width:2px,color:#fff;
+
+    %% 1. Client Layer
+    subgraph Client_Layer ["💻 CLIENT SIDE (Browser)"]
+        Monaco["Monaco Editor (suggestions)"]
+        Xterm["xterm.js Terminal (retry backoff)"]
+        AIChat["AI Chat Sidebar (inline UI, model selector)"]
+        Dashboard["Dashboard View (project management, ZIP downloader)"]
     end
 
-    %% DB & Settings
-    subgraph Databases [Data Storage]
-        Mongo[(MongoDB)]
-        LocalStorage[Local Settings Storage]
+    %% 2. Next.js API Routes Layer
+    subgraph API_Layer ["⚡ API ROUTING LAYER (Next.js 15 App Router)"]
+        ChatAPI["/api/chat (POST handler)"]
+        HistoryAPI["/api/chat/history (GET/POST/DELETE)"]
+        FilesAPI["/api/workspace/files (directory sync)"]
+        TerminalAPI["/api/workspace/terminal (stream gateway)"]
+        DownloadAPI["/api/workspace/download (lightweight ZIP packager)"]
     end
 
-    %% Flow connections
-    Browser -->|API Queries / Auth| NextJS
-    Browser -->|WebSocket Stream| TerminalProcess
-    NextJS -->|ORM Queries| Mongo
-    Browser -->|Save Model Options| LocalStorage
-    NextJS -->|Inject Terminal Logs| AI_Assistant[AI Endpoint / Ollama]
-    TerminalProcess -.->|Keep-alive Buffering| NextJS
+    %% 3. Process & Services Layer
+    subgraph Process_Layer ["⚙️ PROCESS RUNTIME & BACKEND SERVICES"]
+        PTYProcess["Spawned Shell Process (PowerShell / Bash)"]
+        TerminalSessions["globalThis.terminalSessions Map"]
+        AuthService["Auth.js / NextAuth (GitHub & Google OAuth)"]
+        AI_Endpoint["AI Engine (Ollama Offline / OpenAI & DeepSeek Online)"]
+    end
+
+    %% 4. Data Storage Layer
+    subgraph Storage_Layer ["🗄️ STORAGE & HOST FILESYSTEM"]
+        MongoDb[("MongoDB Database (Prisma ORM)")]
+        DiskStorage["Host disk workspace folders (workspaces/[id])"]
+        BrowserLocalStorage["Browser LocalStorage (AI settings)"]
+    end
+
+    %% Apply Styles
+    class Monaco,Xterm,AIChat,Dashboard client;
+    class ChatAPI,HistoryAPI,FilesAPI,TerminalAPI,DownloadAPI api;
+    class PTYProcess,TerminalSessions,AuthService,AI_Endpoint runtime;
+    class MongoDb,DiskStorage,BrowserLocalStorage storage;
+
+    %% Flow Connections
+    %% Client to APIs
+    Monaco -->|Fetch completions| ChatAPI
+    Xterm -->|Bidirectional socket stream| TerminalAPI
+    AIChat -->|Fetch chat actions| ChatAPI
+    AIChat -->|Load/Save history| HistoryAPI
+    Dashboard -->|Read/Sync files| FilesAPI
+    Dashboard -->|Download repo ZIP| DownloadAPI
+
+    %% API to Processes / Services
+    TerminalAPI -->|Spawn / Attach listener| TerminalSessions
+    TerminalSessions -->|Interactive I/O| PTYProcess
+    ChatAPI -->|Inject clean PTY output logs| AI_Endpoint
+    HistoryAPI -->|Persist chat history| MongoDb
+    FilesAPI -->|Disk reads & synchronization| DiskStorage
+    DownloadAPI -->|Create ZIP package| DiskStorage
+    Dashboard -->|Sign in / Authenticate| AuthService
+
+    %% Direct Client local cache
+    AIChat <-->|Swap saved model options| BrowserLocalStorage
 ```
 
 ---
