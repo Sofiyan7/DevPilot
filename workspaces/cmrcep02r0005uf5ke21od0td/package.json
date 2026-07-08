@@ -1,0 +1,10 @@
+{
+  "name": "bl",
+  "version": "1.0.0",
+  "description": "A completely clean, blank workspace with a fresh package.json. Best for configuring everything yourself from scratch.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {}
+}

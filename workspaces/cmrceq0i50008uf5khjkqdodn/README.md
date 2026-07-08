@@ -1,0 +1,2 @@
+# Vibecode Starter
+Created automatically.

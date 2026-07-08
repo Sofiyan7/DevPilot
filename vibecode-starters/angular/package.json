@@ -1,0 +1,7 @@
+{
+  "name": "devpilot-starter",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "echo 'Run config here'"
+  }
+}
