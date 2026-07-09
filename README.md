@@ -40,7 +40,7 @@ graph TD
     classDef subgraphStyle fill:#09090b,stroke:#27272a,stroke-width:1px,color:#a1a1aa;
     
     %% Next.js Frontend Subgraph
-    subgraph Frontend ["Next.js Frontend"]
+    subgraph Frontend ["Next.js Frontend (Browser)"]
         Editor([Monaco Code Editor])
         Terminal([xterm.js Terminal Component])
         AIChat([AI Chat Sidebar Panel])
@@ -57,34 +57,46 @@ graph TD
     %% External Services & AI Subgraph
     subgraph AI_Engine ["AI Engine & Providers"]
         Ollama{{Local Ollama Engine}}
-        CloudAI{{Online Cloud AI OpenAI/DeepSeek}}
+        CloudAI{{Online Cloud AI: OpenAI/DeepSeek}}
     end
 
     %% Database & Storage Subgraph
     subgraph DataStorage ["Data Storage & Systems"]
-        MongoDB[(MongoDB Database)]
-        DiskStorage[(Local Disk Workspace)]
+        MongoDB[(MongoDB Database: Code & Chats)]
+        DiskStorage[(Server Disk Cache: workspaces/id)]
     end
 
     %% Apply Classes
     class Frontend,Backend,AI_Engine,DataStorage subgraphStyle;
 
-    %% Connectors with labels
+    %% Client Interactions
     Terminal -->|1. Stream Shell Session| TerminalAPI
-    TerminalAPI <-->|2. Bidirectional I/O| ShellProcess[[PTY Shell Process]]
+    Editor -->|2. Save Code Edits| FilesAPI
+    AIChat -->|3. Request Code Review / Fix / Optimize| ChatAPI
+
+    %% Terminal shell streaming
+    TerminalAPI <-->|4. Bidirectional Shell Stream| ShellProcess[[PTY Shell Process]]
     
-    Editor -->|3. Trigger AI Completion| ChatAPI
-    AIChat -->|4. Request Code Review / Fix / Optimize| ChatAPI
+    %% Mount and Sync Lifecycle (Critical Data Flow!)
+    FilesAPI -->|5a. Mount Code: Read JSON Tree| MongoDB
+    FilesAPI -->|5b. Extract & Write Cache| DiskStorage
+    FilesAPI <-->|6. Periodically Sync Disk Changes back| MongoDB
     
-    ChatAPI -->|5. Read Active Logs| ShellProcess
-    ChatAPI -->|6. Inject Terminal Context| AI_Engine
-    ChatAPI <-->|7. Persist Message History| MongoDB
+    %% Shell / Terminal Compilation Files I/O
+    ShellProcess <-->|7. Writes build output / updates code| DiskStorage
+
+    %% AI Context Logic
+    ChatAPI -->|8. Read Active Shell Outputs| ShellProcess
+    ChatAPI -->|9. Inject System Prompt Logs| AI_Engine
+    ChatAPI <-->|10. Persist Chat History| MongoDB
     
-    FilesAPI <-->|8. Read/Write Directory| DiskStorage
-    DownloadAPI -->|9. Compress Files to ZIP| DiskStorage
-    
-    Ollama -.->|Local Processing| ClientSettings[(LocalStorage Settings)]
-    CloudAI -.->|API Authentication| ClientSettings
+    %% Code Packaging
+    DownloadAPI -->|11a. Read clean code tree| MongoDB
+    DownloadAPI -->|11b. Pack as ZIP archive| ClientSettings[(Browser Downloads)]
+
+    %% Settings Configuration
+    Ollama -.->|Config Provider| LocalSettings[(Browser LocalStorage Settings)]
+    CloudAI -.->|Config API Key| LocalSettings
 ```
 
 ---
