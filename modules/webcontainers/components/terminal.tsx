@@ -458,6 +458,10 @@ TerminalComponent = forwardRef<TerminalRef, TerminalProps>(({
         term.current.clear();
         term.current.writeln("🔌 Resetting server workspace terminal...");
         try {
+          // Notify the parent IDE preview button to clear instantly
+          if (typeof window !== "undefined") {
+            window.dispatchEvent(new CustomEvent("terminal-reset"));
+          }
           // Terminate active session process tree
           await fetch(`/api/workspace/terminal?id=${webContainerInstance.id}`, {
             method: "DELETE",

@@ -53,6 +53,7 @@ import {
   X,
   Eye,
   Terminal,
+  Loader2,
 } from "lucide-react";
 import { useParams } from "next/navigation";
 import React, {
@@ -70,6 +71,7 @@ const MainPlaygroundPage = () => {
   const [isAIChatVisible, setIsAIChatVisible] = useState(false);
   const mainPanelRef = useRef<any>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isServerRunning, setIsServerRunning] = useState(false);
 
   useEffect(() => {
     if (mainPanelRef.current) {
@@ -82,6 +84,17 @@ const MainPlaygroundPage = () => {
   }, [isAIChatVisible]);
 
   useEffect(() => {
+    const handleReset = () => {
+      setPreviewUrl(null);
+      setIsServerRunning(false);
+    };
+    if (typeof window !== "undefined") {
+      window.addEventListener("terminal-reset", handleReset);
+      return () => window.removeEventListener("terminal-reset", handleReset);
+    }
+  }, []);
+
+  useEffect(() => {
     if (!id) return;
 
     const interval = setInterval(async () => {
@@ -91,12 +104,20 @@ const MainPlaygroundPage = () => {
           const data = await res.json();
           if (data.url) {
             setPreviewUrl(data.url);
+            setIsServerRunning(true);
           } else {
             setPreviewUrl(null);
+            const scanResults = data.debug?.scanResults;
+            const hasActivePort = scanResults && Object.values(scanResults).some((val) => val === true);
+            setIsServerRunning(!!hasActivePort);
           }
+        } else {
+          setPreviewUrl(null);
+          setIsServerRunning(false);
         }
       } catch (error) {
-        // Suppress background tunnel errors
+        setPreviewUrl(null);
+        setIsServerRunning(false);
       }
     }, 4000);
 
@@ -613,13 +634,13 @@ const MainPlaygroundPage = () => {
                   <TooltipContent>Save All (Ctrl+Shift+S)</TooltipContent>
                 </Tooltip>
 
-                {previewUrl && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    {previewUrl ? (
                       <Button
                         size="sm"
                         variant="outline"
-                        className="bg-emerald-950/20 text-emerald-400 border-emerald-500/20 hover:bg-emerald-900/40 hover:text-emerald-300 gap-1.5 transition-colors"
+                        className="bg-emerald-950/20 text-emerald-400 border-emerald-500/20 hover:bg-emerald-900/40 hover:text-emerald-300 gap-1.5 transition-colors flex items-center"
                         asChild
                       >
                         <a href={previewUrl} target="_blank" rel="noopener noreferrer">
@@ -627,10 +648,36 @@ const MainPlaygroundPage = () => {
                           <span>Open Preview</span>
                         </a>
                       </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Open Web Preview Application</TooltipContent>
-                  </Tooltip>
-                )}
+                    ) : isServerRunning ? (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled
+                        className="bg-amber-950/20 text-amber-500 border-amber-500/20 gap-1.5 animate-pulse cursor-wait flex items-center opacity-100"
+                      >
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <span>Connecting Preview...</span>
+                      </Button>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled
+                        className="text-zinc-500 border-zinc-800 bg-zinc-950/20 gap-1.5 cursor-not-allowed flex items-center opacity-60"
+                      >
+                        <Eye className="h-4 w-4" />
+                        <span>Preview Offline</span>
+                      </Button>
+                    )}
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {previewUrl 
+                      ? "Open your running web preview" 
+                      : isServerRunning 
+                      ? "Setting up your secure public preview link..." 
+                      : "Preview is offline. Start a server (e.g. npm run dev) to enable."}
+                  </TooltipContent>
+                </Tooltip>
 
                <ToggleAI
                 isEnabled={aiSuggestions.isEnabled}
@@ -774,11 +821,35 @@ const MainPlaygroundPage = () => {
                           <>
                             <ResizableHandle withHandle />
                             <ResizablePanel defaultSize={40} minSize={15}>
-                              <TerminalComponent
-                                webContainerInstance={instance}
-                                theme="dark"
-                                className="h-full"
-                              />
+                              <div className="flex h-full w-full bg-[#09090B] border border-zinc-800 rounded-lg overflow-hidden">
+                                <div className="flex-1 min-w-0">
+                                  <TerminalComponent
+                                    webContainerInstance={instance}
+                                    theme="dark"
+                                    className="h-full border-0 rounded-none"
+                                  />
+                                </div>
+                                <div className="w-80 shrink-0 border-l border-zinc-800 p-4 bg-zinc-950/60 overflow-y-auto flex flex-col gap-4 text-xs select-none">
+                                  <div className="flex items-center gap-1.5 text-zinc-400 font-medium pb-2 border-b border-zinc-800">
+                                    <Bot className="h-4 w-4 text-emerald-400" />
+                                    <span>DevPilot Terminal Guide</span>
+                                  </div>
+                                  <div className="flex flex-col gap-3 text-zinc-400">
+                                    <div className="flex gap-2">
+                                      <span className="text-zinc-500 font-bold">1.</span>
+                                      <p>
+                                        To stop or kill any active command or web server, delete the session by clicking the **bin icon** on the top-right corner of the terminal bar.
+                                      </p>
+                                    </div>
+                                    <div className="flex gap-2">
+                                      <span className="text-zinc-500 font-bold">2.</span>
+                                      <p>
+                                        When you start a development server (like `npm run dev`), DevPilot automatically tunnels it to a secure live preview URL. The **Open Preview** button in the header toolbar will turn orange while loading, then green when the site is ready to view.
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
                             </ResizablePanel>
                           </>
                         )}
