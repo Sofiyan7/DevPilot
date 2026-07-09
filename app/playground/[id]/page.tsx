@@ -69,6 +69,7 @@ const MainPlaygroundPage = () => {
   const [isTerminalVisible, setIsTerminalVisible] = useState(true);
   const [isAIChatVisible, setIsAIChatVisible] = useState(false);
   const mainPanelRef = useRef<any>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (mainPanelRef.current) {
@@ -79,6 +80,28 @@ const MainPlaygroundPage = () => {
       }
     }
   }, [isAIChatVisible]);
+
+  useEffect(() => {
+    if (!id) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/workspace/tunnel?id=${id}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.url) {
+            setPreviewUrl(data.url);
+          } else {
+            setPreviewUrl(null);
+          }
+        }
+      } catch (error) {
+        // Suppress background tunnel errors
+      }
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [id]);
 
   const { playgroundData, templateData, isLoading, error, saveTemplateData } =
     usePlayground(id);
@@ -589,6 +612,25 @@ const MainPlaygroundPage = () => {
                   </TooltipTrigger>
                   <TooltipContent>Save All (Ctrl+Shift+S)</TooltipContent>
                 </Tooltip>
+
+                {previewUrl && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="bg-emerald-950/20 text-emerald-400 border-emerald-500/20 hover:bg-emerald-900/40 hover:text-emerald-300 gap-1.5 transition-colors"
+                        asChild
+                      >
+                        <a href={previewUrl} target="_blank" rel="noopener noreferrer">
+                          <Eye className="h-4 w-4" />
+                          <span>Open Preview</span>
+                        </a>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Open Web Preview Application</TooltipContent>
+                  </Tooltip>
+                )}
 
                <ToggleAI
                 isEnabled={aiSuggestions.isEnabled}

@@ -41,6 +41,7 @@ export async function GET(request: NextRequest) {
       cwd: workspacePath,
       env: {
         ...process.env,
+        NODE_ENV: "development",
         FORCE_COLOR: "1", // Hint tools to use color codes
         TERM: "xterm-color",
       },
