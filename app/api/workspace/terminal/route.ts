@@ -112,7 +112,8 @@ export async function GET(request: NextRequest) {
       "Content-Type": "text/plain; charset=utf-8",
       "Transfer-Encoding": "chunked",
       "Cache-Control": "no-cache",
-      Connection: "keep-alive",
+      "Connection": "keep-alive",
+      "X-Accel-Buffering": "no",
     },
   });
 }
