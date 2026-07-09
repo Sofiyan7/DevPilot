@@ -53,6 +53,8 @@ TerminalComponent = forwardRef<TerminalRef, TerminalProps>(({
   const currentProcess = useRef<any>(null);
   const shellProcess = useRef<any>(null);
   const instanceRef = useRef<any>(null);
+  const activeReader = useRef<any>(null);
+  const prevInstanceId = useRef<string | null>(null);
 
   useEffect(() => {
     instanceRef.current = webContainerInstance;
@@ -408,9 +410,9 @@ TerminalComponent = forwardRef<TerminalRef, TerminalProps>(({
         term.current.writeln("🚀 DevPilot Server Terminal");
 
         const reader = response.body?.getReader();
-        const decoder = new TextDecoder();
-
         if (reader) {
+          activeReader.current = reader;
+          const decoder = new TextDecoder();
           while (true) {
             const { done, value } = await reader.read();
             if (done) break;
@@ -582,6 +584,12 @@ TerminalComponent = forwardRef<TerminalRef, TerminalProps>(({
     return () => {
       if (resizeTimeoutId) clearTimeout(resizeTimeoutId);
       resizeObserver.disconnect();
+      if (activeReader.current) {
+        try {
+          activeReader.current.cancel().catch(() => {});
+        } catch (e) {}
+        activeReader.current = null;
+      }
       if (currentProcess.current) {
         currentProcess.current.kill();
       }
@@ -596,6 +604,22 @@ TerminalComponent = forwardRef<TerminalRef, TerminalProps>(({
       }
     };
   }, [initializeTerminal]);
+
+  useEffect(() => {
+    if (webContainerInstance && webContainerInstance.id !== prevInstanceId.current) {
+      if (activeReader.current) {
+        try {
+          activeReader.current.cancel().catch(() => {});
+        } catch (e) {}
+        activeReader.current = null;
+      }
+      prevInstanceId.current = webContainerInstance.id;
+      setIsConnected(false);
+      if (term.current) {
+        term.current.clear();
+      }
+    }
+  }, [webContainerInstance]);
 
   useEffect(() => {
     if (webContainerInstance && term.current && !isConnected) {

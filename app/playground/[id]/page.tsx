@@ -848,7 +848,7 @@ const MainPlaygroundPage = () => {
                                       <div className="flex gap-2">
                                         <span className="text-zinc-500 font-bold">2.</span>
                                         <p>
-                                          When you start a development server (like `npm run dev`), DevPilot automatically tunnels it to a secure live preview URL. The **Open Preview** button in the header toolbar will turn orange while loading, then green when the site is ready to view.
+                                          When you start a development server (like `npm run dev`), DevPilot automatically tunnels it to a secure live preview URL. The **Open Preview** button in the header toolbar will turn green. Once clicked, please allow 5 to 10 seconds for the tunnel to finish building and load the page.
                                         </p>
                                       </div>
                                       <div className="flex gap-2">
