@@ -138,6 +138,15 @@ export async function GET(request: NextRequest) {
     }
 
     if (action === "sync") {
+      // Automatically ensure execute permissions on node_modules/.bin for Linux containers
+      if (process.platform !== "win32") {
+        const binPath = path.join(workspacePath, "node_modules", ".bin");
+        try {
+          const { exec } = require("child_process");
+          exec(`chmod -R +x "${binPath}"`, () => {});
+        } catch (e) {}
+      }
+
       await syncWorkspaceToDb(id, workspacePath);
 
       const updated = await db.playground.findUnique({
