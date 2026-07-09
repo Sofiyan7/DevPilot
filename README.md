@@ -41,29 +41,29 @@ graph TD
     
     %% Next.js Frontend Subgraph
     subgraph Frontend ["Next.js Frontend"]
-        Editor["Monaco Code Editor"]
-        Terminal["xterm.js Terminal Component"]
-        AIChat["AI Chat Sidebar Panel"]
+        Editor([Monaco Code Editor])
+        Terminal([xterm.js Terminal Component])
+        AIChat([AI Chat Sidebar Panel])
     end
 
     %% DevPilot Backend Server Subgraph
     subgraph Backend ["DevPilot Backend Server"]
-        TerminalAPI["Terminal Stream Gateway"]
-        FilesAPI["Workspace File Synchronizer"]
-        ChatAPI["Context-Aware Chat Handler"]
-        DownloadAPI["Repository ZIP Packager"]
+        TerminalAPI[[Terminal Stream Gateway]]
+        FilesAPI[[Workspace File Synchronizer]]
+        ChatAPI[[Context-Aware Chat Handler]]
+        DownloadAPI[[Repository ZIP Packager]]
     end
 
     %% External Services & AI Subgraph
     subgraph AI_Engine ["AI Engine & Providers"]
-        Ollama["Local Ollama Engine"]
-        CloudAI["Online Cloud AI (OpenAI/DeepSeek)"]
+        Ollama{{Local Ollama Engine}}
+        CloudAI{{Online Cloud AI OpenAI/DeepSeek}}
     end
 
     %% Database & Storage Subgraph
     subgraph DataStorage ["Data Storage & Systems"]
-        MongoDB[("MongoDB Database")]
-        DiskStorage[("Local Disk Workspace")]
+        MongoDB[(MongoDB Database)]
+        DiskStorage[(Local Disk Workspace)]
     end
 
     %% Apply Classes
@@ -71,7 +71,7 @@ graph TD
 
     %% Connectors with labels
     Terminal -->|1. Stream Shell Session| TerminalAPI
-    TerminalAPI <-->|2. Bidirectional I/O| ShellProcess["⚙️ PTY Shell (PowerShell/Bash)"]
+    TerminalAPI <-->|2. Bidirectional I/O| ShellProcess[[PTY Shell Process]]
     
     Editor -->|3. Trigger AI Completion| ChatAPI
     AIChat -->|4. Request Code Review / Fix / Optimize| ChatAPI
@@ -83,7 +83,7 @@ graph TD
     FilesAPI <-->|8. Read/Write Directory| DiskStorage
     DownloadAPI -->|9. Compress Files to ZIP| DiskStorage
     
-    Ollama -.->|Local Processing| ClientSettings["LocalStorage (AI settings)"]
+    Ollama -.->|Local Processing| ClientSettings[(LocalStorage Settings)]
     CloudAI -.->|API Authentication| ClientSettings
 ```
 
