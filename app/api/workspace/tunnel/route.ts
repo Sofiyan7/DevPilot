@@ -99,7 +99,7 @@ export async function GET(request: NextRequest) {
 
   try {
     // Spawn localtunnel in the background pointing to the newly active port
-    const child = spawn("npx", ["localtunnel", "--port", String(activePort)], {
+    const child = spawn("npx", ["-y", "localtunnel", "--port", String(activePort)], {
       shell: true,
       env: { ...process.env },
     });
