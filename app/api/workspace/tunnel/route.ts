@@ -73,9 +73,18 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ url: null });
   }
 
-  // 3. If a tunnel is already running for the detected active port, return its URL
-  if (session.tunnelPort === activePort && session.tunnelUrl) {
-    return NextResponse.json({ url: session.tunnelUrl });
+  // 3. If a tunnel is already booting or running for the detected active port, reuse it
+  if (session.tunnelPort === activePort) {
+    if (session.tunnelUrl) {
+      return NextResponse.json({ url: session.tunnelUrl });
+    }
+    // Wait for the existing tunnel process to resolve the URL
+    let attempts = 0;
+    while (!session.tunnelUrl && attempts < 10 && session.tunnelPort === activePort) {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      attempts++;
+    }
+    return NextResponse.json({ url: session.tunnelUrl || null });
   }
 
   // 4. If the port changed, kill the old tunnel process
@@ -105,6 +114,11 @@ export async function GET(request: NextRequest) {
       if (match) {
         session.tunnelUrl = match[0].trim();
       }
+    });
+
+    // Listen to stderr for debug logs
+    child.stderr.on("data", (data: Buffer) => {
+      console.error("Tunnel stderr:", data.toString("utf8"));
     });
 
     child.on("close", () => {
