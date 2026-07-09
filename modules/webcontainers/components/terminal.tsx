@@ -8,7 +8,7 @@ import { SearchAddon } from "xterm-addon-search";
 import "xterm/css/xterm.css";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Copy, Trash2, Download } from "lucide-react";
+import { Search, Copy, Trash2, Download, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useFileExplorer } from "../../playground/hooks/useFileExplorer";
 
@@ -17,6 +17,8 @@ interface TerminalProps {
   className?: string;
   theme?: "dark" | "light";
   webContainerInstance?: any;
+  isGuideVisible?: boolean;
+  onToggleGuide?: () => void;
 }
 
 // Define the methods that will be exposed through the ref
@@ -31,7 +33,9 @@ TerminalComponent = forwardRef<TerminalRef, TerminalProps>(({
   webcontainerUrl, 
   className,
   theme = "dark",
-  webContainerInstance
+  webContainerInstance,
+  isGuideVisible,
+  onToggleGuide
 }, ref) => {
   const terminalRef = useRef<HTMLDivElement>(null);
   const term = useRef<Terminal | null>(null);
@@ -637,6 +641,18 @@ TerminalComponent = forwardRef<TerminalRef, TerminalProps>(({
             </div>
           )}
           
+          {onToggleGuide && (
+            <Button
+              variant={isGuideVisible ? "secondary" : "ghost"}
+              size="sm"
+              onClick={onToggleGuide}
+              className="h-6 gap-1 px-1.5 text-xs text-muted-foreground hover:text-foreground mr-1"
+            >
+              <HelpCircle className="h-3 w-3" />
+              <span>Guide</span>
+            </Button>
+          )}
+
           <Button
             variant="ghost"
             size="sm"

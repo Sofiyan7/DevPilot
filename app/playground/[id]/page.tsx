@@ -72,6 +72,7 @@ const MainPlaygroundPage = () => {
   const mainPanelRef = useRef<any>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isServerRunning, setIsServerRunning] = useState(false);
+  const [isGuideVisible, setIsGuideVisible] = useState(false);
 
   useEffect(() => {
     if (mainPanelRef.current) {
@@ -827,28 +828,38 @@ const MainPlaygroundPage = () => {
                                     webContainerInstance={instance}
                                     theme="dark"
                                     className="h-full border-0 rounded-none"
+                                    isGuideVisible={isGuideVisible}
+                                    onToggleGuide={() => setIsGuideVisible(!isGuideVisible)}
                                   />
                                 </div>
-                                <div className="w-80 shrink-0 border-l border-zinc-800 p-4 bg-zinc-950/60 overflow-y-auto flex flex-col gap-4 text-xs select-none">
-                                  <div className="flex items-center gap-1.5 text-zinc-400 font-medium pb-2 border-b border-zinc-800">
-                                    <Bot className="h-4 w-4 text-emerald-400" />
-                                    <span>DevPilot Terminal Guide</span>
-                                  </div>
-                                  <div className="flex flex-col gap-3 text-zinc-400">
-                                    <div className="flex gap-2">
-                                      <span className="text-zinc-500 font-bold">1.</span>
-                                      <p>
-                                        To stop or kill any active command or web server, delete the session by clicking the **bin icon** on the top-right corner of the terminal bar.
-                                      </p>
+                                {isGuideVisible && (
+                                  <div className="w-80 shrink-0 border-l border-zinc-800 p-4 bg-zinc-950/60 overflow-y-auto flex flex-col gap-4 text-xs select-none">
+                                    <div className="flex items-center gap-1.5 text-zinc-400 font-medium pb-2 border-b border-zinc-800">
+                                      <Bot className="h-4 w-4 text-emerald-400" />
+                                      <span>DevPilot Terminal Guide</span>
                                     </div>
-                                    <div className="flex gap-2">
-                                      <span className="text-zinc-500 font-bold">2.</span>
-                                      <p>
-                                        When you start a development server (like `npm run dev`), DevPilot automatically tunnels it to a secure live preview URL. The **Open Preview** button in the header toolbar will turn orange while loading, then green when the site is ready to view.
-                                      </p>
+                                    <div className="flex flex-col gap-3 text-zinc-400">
+                                      <div className="flex gap-2">
+                                        <span className="text-zinc-500 font-bold">1.</span>
+                                        <p>
+                                          To stop or kill any active command or web server, delete the session by clicking the **bin icon** on the top-right corner of the terminal bar.
+                                        </p>
+                                      </div>
+                                      <div className="flex gap-2">
+                                        <span className="text-zinc-500 font-bold">2.</span>
+                                        <p>
+                                          When you start a development server (like `npm run dev`), DevPilot automatically tunnels it to a secure live preview URL. The **Open Preview** button in the header toolbar will turn orange while loading, then green when the site is ready to view.
+                                        </p>
+                                      </div>
+                                      <div className="flex gap-2">
+                                        <span className="text-zinc-500 font-bold">3.</span>
+                                        <p>
+                                          When starting a development project (such as React or Vue) for the first time, run the installation command (`npm install`) once to download all package dependencies before starting the server.
+                                        </p>
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
+                                )}
                               </div>
                             </ResizablePanel>
                           </>
