@@ -114,7 +114,6 @@ export async function GET(request: NextRequest) {
   return new Response(responseStream, {
     headers: {
       "Content-Type": "text/event-stream",
-      "Transfer-Encoding": "chunked",
       "Cache-Control": "no-cache, no-transform",
       "Connection": "keep-alive",
       "X-Accel-Buffering": "no",

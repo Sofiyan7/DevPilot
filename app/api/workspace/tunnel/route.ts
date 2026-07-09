@@ -11,7 +11,7 @@ const globalForTerminal = globalThis as unknown as {
 function checkPortActive(port: number): Promise<boolean> {
   return new Promise((resolve) => {
     const socket = new net.Socket();
-    socket.setTimeout(250);
+    socket.setTimeout(800); // Safe 800ms timeout for Render Free Tier CPU throttling
     socket.on("connect", () => {
       socket.destroy();
       resolve(true);
@@ -24,7 +24,7 @@ function checkPortActive(port: number): Promise<boolean> {
       socket.destroy();
       resolve(false);
     });
-    socket.connect(port, "127.0.0.1");
+    socket.connect(port, "localhost");
   });
 }
 
@@ -39,21 +39,23 @@ export async function GET(request: NextRequest) {
 
   const sessions = globalForTerminal.terminalSessions;
   if (!sessions) {
-    return NextResponse.json({ url: null });
+    return NextResponse.json({ url: null, debug: { sessionsMapExists: false } });
   }
 
   const session = sessions.get(id);
   if (!session) {
-    return NextResponse.json({ url: null });
+    return NextResponse.json({ url: null, debug: { sessionExists: false } });
   }
 
   // 1. Scan for active local ports
   let activePort: number | null = null;
+  const scanResults: Record<number, boolean> = {};
   for (const port of PORTS_TO_SCAN) {
     // Exclude the main server port running DevPilot itself
     if (port === 7860) continue;
 
     const isActive = await checkPortActive(port);
+    scanResults[port] = isActive;
     if (isActive) {
       activePort = port;
       break; // Forward the first active server port found
@@ -70,7 +72,15 @@ export async function GET(request: NextRequest) {
       session.tunnelUrl = undefined;
       session.tunnelPort = undefined;
     }
-    return NextResponse.json({ url: null });
+    return NextResponse.json({ 
+      url: null, 
+      debug: { 
+        sessionExists: true, 
+        scanResults, 
+        platform: process.platform,
+        nodeEnv: process.env.NODE_ENV
+      } 
+    });
   }
 
   // 3. If a tunnel is already booting or running for the detected active port, reuse it
