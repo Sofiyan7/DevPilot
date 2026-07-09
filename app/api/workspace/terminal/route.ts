@@ -83,6 +83,9 @@ export async function GET(request: NextRequest) {
 
   const responseStream = new ReadableStream({
     start(controller) {
+      // Force instant HTTP header flushing by sending a startup carriage return
+      controller.enqueue(encoder.encode("\r\n"));
+
       // 1. Write the existing terminal buffer history so user sees state on page reload
       if (session?.outputBuffer) {
         controller.enqueue(encoder.encode(session.outputBuffer));
@@ -109,9 +112,9 @@ export async function GET(request: NextRequest) {
 
   return new Response(responseStream, {
     headers: {
-      "Content-Type": "text/plain; charset=utf-8",
+      "Content-Type": "text/event-stream",
       "Transfer-Encoding": "chunked",
-      "Cache-Control": "no-cache",
+      "Cache-Control": "no-cache, no-transform",
       "Connection": "keep-alive",
       "X-Accel-Buffering": "no",
     },
