@@ -1,6 +1,6 @@
-# 🚀 DevPilot — Advanced Interactive Code Playground & AI Developer Workspace
+# 🚀 DevPilot — Advanced Interactive Code Playground & AI Developer IDE
 
-DevPilot is a state-of-the-art, web-based interactive development environment built using **Next.js 15 (Turbopack)**, **MongoDB**, and **xterm.js**. It enables developers to instantiate, edit, run, compile, and download sandboxed workspace projects with a rich vertical split-pane editor and terminal, alongside an integrated, context-aware AI Coding Assistant.
+DevPilot is a state-of-the-art, web-based interactive development environment (IDE) built using **Next.js 15 (Turbopack)**, **MongoDB**, and **xterm.js**. It enables developers to instantiate, edit, run, compile, and download sandboxed workspace projects with a rich vertical split-pane editor and terminal, alongside an integrated, context-aware AI Coding Assistant.
 
 ---
 
@@ -15,7 +15,7 @@ https://devpilot-aj89.onrender.com/
 
 ### 🔌 2. Real-Time Terminal Streaming
 * **Live Shell Integration**: Shell processes (PowerShell/Bash) are spawned as server-side child processes and streamed bidirectionally to the front-end using xterm.js.
-* **Background Process Control**: Supports automatic terminal cleanup. Lingering backend compilers or watchers are forcefully closed (`taskkill` / `process.kill`) when a project is closed or deleted.
+* **Background Process Control**: Supports automatic terminal cleanup. Lingering backend compilers or watchers are forcefully closed (`taskkill`) when a project is closed or deleted.
 * **Robust Connection Lifecycles**: Front-end automatic retry handler with exponential backoff guarantees terminal reconnection during dev compilation or route hot-reloads.
 
 ### 🧠 3. Context-Aware AI Chat Assistant
@@ -25,22 +25,7 @@ https://devpilot-aj89.onrender.com/
 * **Terminal Error Integration**: The AI has direct, real-time access to the last 4KB of active project terminal logs. If a compiler or runtime error occurs, the assistant can immediately analyze the raw logs to diagnose issues and provide step-by-step code fixes.
 * **Persistent project-scoped history**: Isolates and stores chat histories per playground ID in MongoDB (with cascade-deletion).
 
-### 🌐 4. Background Web Port Scanner & Cloud Tunneling
-* **Auto-Port Sweeper**: Automatically scans local development ports (`5173`, `3000`, `8080`, `5000`, `4200`, `8000`, `3001`) in the background via lightweight TCP connection sockets.
-* **Instant Cloud Tunnels**: Automatically boots a secure `localtunnel` background instance to expose local Node.js or Vite dev servers to public secure URLs.
-* **Dynamic "Open Preview" Button**: A header toolbar button that is permanently present and transitions colors based on the status of your app:
-  * ⚪ **Colorless (Offline)**: Dev server is not running.
-  * 🟡 **Pulsing Orange (Connecting)**: Port scanner detected an active local server; the tunnel is actively building.
-  * 🟢 **Green (Ready)**: The tunnel has resolved and the live preview application is fully ready to open.
-
-### ⚙️ 5. Self-Healing Environment Permissions
-* **Auto Execute Permission Resolver**: Runs dynamic background checks (`chmod -R +x node_modules/.bin`) on file synchronization. Automatically fixes any `Permission denied` errors on Vite and npm binaries without user intervention.
-
-### 📘 6. Interactive Terminal Guide
-* **Toggleable Help Pane**: An on-demand guide drawer placed next to the terminal.
-* **Quick Reference Tips**: Clear, simplified walkthroughs explaining session controls, live preview tunnels, and dependency installations (`npm install`) to ensure smooth initial configurations.
-
-### 📥 7. Repository Packaging & Downloads
+### 📥 4. Repository Packaging & Downloads
 * **ZIP Downloader**: Client-side trigger to package and download the active workspace on demand.
 * **Operational Exclusions**: Excludes heavy operational directories (like `node_modules`, `.next`, `.git`) during packaging to keep downloads lightweight.
 
