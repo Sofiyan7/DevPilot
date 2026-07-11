@@ -1,4 +1,4 @@
-# 🚀 DevPilot — Advanced Interactive Code Playground & AI Developer IDE
+# 🚀 DevPilot — Advanced Interactive Code Playground & AI Developer Workspace
 
 <div align="left">
   <img src="https://img.shields.io/badge/NEXT.JS-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js" />
@@ -19,7 +19,7 @@
   <img src="https://img.shields.io/badge/DeepSeek_API-1c73e8?style=flat-square&logo=openai&logoColor=white" alt="DeepSeek API" />
 </div>
 
-DevPilot is a state-of-the-art, web-based interactive development environment (IDE) built using **Next.js 15 (Turbopack)**, **MongoDB**, and **xterm.js**. It enables developers to instantiate, edit, run, compile, and download sandboxed workspace projects with a rich vertical split-pane editor and terminal, alongside an integrated, context-aware AI Coding Assistant.
+DevPilot is a state-of-the-art, web-based interactive development environment built using **Next.js 15 (Turbopack)**, **MongoDB**, and **xterm.js**. It enables developers to instantiate, edit, run, compile, and download sandboxed workspace projects with a rich vertical split-pane editor and terminal, alongside an integrated, context-aware AI Coding Assistant.
 
 ---
 
