@@ -1,5 +1,24 @@
 # 🚀 DevPilot — Advanced Interactive Code Playground & AI Developer IDE
 
+<div align="left">
+  <img src="https://img.shields.io/badge/NEXT.JS-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js" />
+  <img src="https://img.shields.io/badge/TAILWIND_CSS-38B2AC?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/MONGODB-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB" />
+  <img src="https://img.shields.io/badge/PRISMA-2D3748?style=for-the-badge&logo=prisma&logoColor=white" alt="Prisma" />
+  <img src="https://img.shields.io/badge/DOCKER-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" />
+  <img src="https://img.shields.io/badge/AUTH.JS-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Auth.js" />
+  <img src="https://img.shields.io/badge/XTERM.JS-FF6F00?style=for-the-badge&logo=terminal&logoColor=white" alt="xterm.js" />
+</div>
+
+<div align="left" style="margin-top: 8px; margin-bottom: 20px;">
+  <strong>Cloud & AI Suite:</strong>
+  <img src="https://img.shields.io/badge/Render_Cloud-46E3B7?style=flat-square&logo=render&logoColor=white" alt="Render" />
+  <img src="https://img.shields.io/badge/MongoDB_Atlas-47A248?style=flat-square&logo=mongodb&logoColor=white" alt="MongoDB Atlas" />
+  <img src="https://img.shields.io/badge/Ollama_Local-000000?style=flat-square&logo=ollama&logoColor=white" alt="Ollama Local" />
+  <img src="https://img.shields.io/badge/OpenAI_API-412991?style=flat-square&logo=openai&logoColor=white" alt="OpenAI API" />
+  <img src="https://img.shields.io/badge/DeepSeek_API-1c73e8?style=flat-square&logo=openai&logoColor=white" alt="DeepSeek API" />
+</div>
+
 DevPilot is a state-of-the-art, web-based interactive development environment (IDE) built using **Next.js 15 (Turbopack)**, **MongoDB**, and **xterm.js**. It enables developers to instantiate, edit, run, compile, and download sandboxed workspace projects with a rich vertical split-pane editor and terminal, alongside an integrated, context-aware AI Coding Assistant.
 
 ---
