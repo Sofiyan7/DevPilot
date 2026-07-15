@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Github, Loader2, GitFork, Search, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 interface CloneRepoModalProps {
   isOpen: boolean;
@@ -51,8 +52,7 @@ export const CloneRepoModal = ({ isOpen, onClose }: CloneRepoModalProps) => {
   };
 
   const handleConnectGithub = () => {
-    // Redirect to NextAuth GitHub provider with offline repo permissions scopes
-    window.location.href = "/api/auth/signin/github";
+    signIn("github");
   };
 
   const triggerClone = async (url: string, title?: string) => {
